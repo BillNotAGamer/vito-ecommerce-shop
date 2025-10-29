@@ -19,3 +19,4 @@ F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Infrastructure\obj\Deb
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Infrastructure\obj\Debug\net8.0\VitoEShop.Infrastructure.pdb
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Infrastructure\obj\Debug\net8.0\VitoEShop.Infrastructure.genruntimeconfig.cache
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Infrastructure\obj\Debug\net8.0\ref\VitoEShop.Infrastructure.dll
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Infrastructure\obj\Debug\net8.0\VitoEShop.Infrastructure.sourcelink.json

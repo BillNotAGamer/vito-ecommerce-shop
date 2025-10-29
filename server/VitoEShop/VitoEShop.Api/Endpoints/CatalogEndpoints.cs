@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OpenApi;
 
 namespace EShop.Api.Endpoints;
 
@@ -21,7 +22,6 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
                 .OrderBy(x => x.SortOrder)
                 .Select(x => new CategoryDto(x.CategoryId, x.Name, x.Slug))
                 .ToListAsync();
-
             return Results.Ok(data);
         });
 
@@ -46,7 +46,6 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
                         )).ToList()
                 ))
                 .FirstOrDefaultAsync();
-
             return product is null ? Results.NotFound() : Results.Ok(product);
         });
 
@@ -64,7 +63,6 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
                     .Where(c => c.Slug == q.CategorySlug && c.IsActive)
                     .Select(c => (int?)c.CategoryId)
                     .FirstOrDefaultAsync();
-
                 if (categoryId == null)
                     return Results.Ok(new PagedResult<ProductListItemDto>([], 0, q.Page, q.PageSize)); // không có danh mục
             }
@@ -102,16 +100,12 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
             // 5. Áp bộ lọc
             if (!string.IsNullOrWhiteSpace(q.Brand))
                 productWithVariants = productWithVariants.Where(x => x.Brand != null && x.Brand == q.Brand);
-
             if (!string.IsNullOrWhiteSpace(q.Size))
                 productWithVariants = productWithVariants.Where(x => x.Size == q.Size);
-
             if (!string.IsNullOrWhiteSpace(q.Color))
                 productWithVariants = productWithVariants.Where(x => x.Color == q.Color);
-
             if (q.MinPrice.HasValue)
                 productWithVariants = productWithVariants.Where(x => x.Price >= q.MinPrice.Value);
-
             if (q.MaxPrice.HasValue)
                 productWithVariants = productWithVariants.Where(x => x.Price <= q.MaxPrice.Value);
 
@@ -151,7 +145,7 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
                 };
 
             // 8. Sort
-            IOrderedQueryable<dynamic> ordered = q.Sort switch
+            var ordered = q.Sort switch
             {
                 "price_asc" => groupedWithSales.OrderBy(x => x.MinPrice),
                 "price_desc" => groupedWithSales.OrderByDescending(x => x.MaxPrice),
@@ -198,20 +192,17 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
 }
 
 public sealed record CategoryDto(int Id, string Name, string Slug);
-
 public sealed record ProductDetailDto(
-    long Id,
-    string Title,
-    string Slug,
-    string? Brand,
-    string? Material,
-    List<ImageDto> Images,
-    List<VariantDto> Variants
+long Id,
+string Title,
+string Slug,
+string? Brand,
+string? Material,
+List<ImageDto> Images,
+List<VariantDto> Variants
 );
-
 public sealed record ImageDto(string Url, string? Alt);
 public sealed record VariantDto(long Id, string Sku, string? Size, string? Color, decimal Price, int Available);
-
 public sealed class ProductListQuery
 {
     [FromQuery(Name = "categorySlug")] public string? CategorySlug { get; set; }
@@ -220,26 +211,24 @@ public sealed class ProductListQuery
     [FromQuery(Name = "color")] public string? Color { get; set; }
     [FromQuery(Name = "minPrice")] public decimal? MinPrice { get; set; }
     [FromQuery(Name = "maxPrice")] public decimal? MaxPrice { get; set; }
-    /// latest | price_asc | price_desc | bestseller
-    [FromQuery(Name = "sort")] public string? Sort { get; set; } = "latest";
+    /// latest | price_asc | price_desc | bestseller
+    [FromQuery(Name = "sort")] public string? Sort { get; set; } = "latest";
     [Range(1, int.MaxValue)]
     [FromQuery(Name = "page")] public int Page { get; set; } = 1;
     [Range(1, 200)]
     [FromQuery(Name = "pageSize")] public int PageSize { get; set; } = 12;
 }
-
 public sealed record ProductListItemDto(
-    long Id,
-    string Title,
-    string Slug,
-    string? Brand,
-    decimal MinPrice,
-    decimal MaxPrice,
-    string? PrimaryImageUrl,
-    List<string?> Colors,
-    List<string?> Sizes
+long Id,
+string Title,
+string Slug,
+string? Brand,
+decimal MinPrice,
+decimal MaxPrice,
+string? PrimaryImageUrl,
+List<string?> Colors,
+List<string?> Sizes
 );
-
 public sealed record PagedResult<T>(IReadOnlyList<T> Items, int Total, int Page, int PageSize)
 {
     public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);

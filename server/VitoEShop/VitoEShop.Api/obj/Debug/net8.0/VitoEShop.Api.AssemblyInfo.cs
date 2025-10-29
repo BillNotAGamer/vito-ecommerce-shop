@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VitoEShop.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bdd9884c8c435afd3c3c72eef08bd3ec370b28c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("VitoEShop.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VitoEShop.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -17,3 +17,4 @@ F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Application\obj\Debug\
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Application\obj\Debug\net8.0\ref\VitoEShop.Application.dll
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Application\bin\Debug\net8.0\VitoEShop.Application.runtimeconfig.json
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Application\obj\Debug\net8.0\VitoEShop.Application.genruntimeconfig.cache
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Application\obj\Debug\net8.0\VitoEShop.Application.sourcelink.json

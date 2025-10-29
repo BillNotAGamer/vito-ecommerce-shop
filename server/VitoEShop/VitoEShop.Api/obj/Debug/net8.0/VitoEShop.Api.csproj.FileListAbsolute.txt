@@ -197,3 +197,5 @@ F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Api\obj\Debug\net8.0\V
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Api\obj\Debug\net8.0\VitoEShop.Api.genruntimeconfig.cache
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Api\obj\Debug\net8.0\ref\VitoEShop.Api.dll
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Api\obj\Debug\net8.0\VitoEShop.Api.MvcApplicationPartsAssemblyInfo.cs
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Api\bin\Debug\net8.0\Microsoft.AspNetCore.OpenApi.dll
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Api\obj\Debug\net8.0\VitoEShop.Api.sourcelink.json

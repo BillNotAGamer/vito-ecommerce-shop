@@ -11,3 +11,4 @@ F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Contracts\obj\Debug\ne
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Contracts\obj\Debug\net8.0\ref\VitoEShop.Contracts.dll
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Contracts\bin\Debug\net8.0\VitoEShop.Contracts.runtimeconfig.json
 F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Contracts\obj\Debug\net8.0\VitoEShop.Contracts.genruntimeconfig.cache
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Contracts\obj\Debug\net8.0\VitoEShop.Contracts.sourcelink.json
