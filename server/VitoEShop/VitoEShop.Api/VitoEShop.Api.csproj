@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VitoEShop.Application\VitoEShop.Application.csproj" />
+    <ProjectReference Include="..\VitoEShop.Contracts\VitoEShop.Contracts.csproj" />
+    <ProjectReference Include="..\VitoEShop.Domain\VitoEShop.Domain.csproj" />
+    <ProjectReference Include="..\VitoEShop.Infrastructure\VitoEShop.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

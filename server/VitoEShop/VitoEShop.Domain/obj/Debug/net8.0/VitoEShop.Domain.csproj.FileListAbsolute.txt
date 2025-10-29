@@ -1,0 +1,13 @@
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\bin\Debug\net8.0\VitoEShop.Domain.deps.json
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\bin\Debug\net8.0\VitoEShop.Domain.dll
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\bin\Debug\net8.0\VitoEShop.Domain.pdb
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.GeneratedMSBuildEditorConfig.editorconfig
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.AssemblyInfoInputs.cache
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.AssemblyInfo.cs
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.csproj.CoreCompileInputs.cache
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.dll
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\refint\VitoEShop.Domain.dll
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.pdb
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\ref\VitoEShop.Domain.dll
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\bin\Debug\net8.0\VitoEShop.Domain.runtimeconfig.json
+F:\Coding\Web development\Vito\server\VitoEShop\VitoEShop.Domain\obj\Debug\net8.0\VitoEShop.Domain.genruntimeconfig.cache
