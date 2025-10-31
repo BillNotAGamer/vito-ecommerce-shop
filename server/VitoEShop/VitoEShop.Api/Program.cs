@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using VitoEShop.Api.Services;
 using VitoEShop.Infrastructure;
-using VitoEShop.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +10,12 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); builder.Services.AddCors(opt =>
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("Any", p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 });
-builder.Services.AddDbContext<VitoEShopDbContext>(opt =>
-{
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("Sql"));
-});
+builder.Services.AddScoped<OrderService>();
 
 var app = builder.Build();
 
