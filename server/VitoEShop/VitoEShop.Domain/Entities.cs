@@ -13,13 +13,29 @@ namespace VitoEShop.Domain
             public Guid UserId { get; set; } = Guid.NewGuid();
             public string Email { get; set; } = default!;
             public string? Phone { get; set; }
-            public byte[]? PasswordHash { get; set; }
+            public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
+            public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
             public string FullName { get; set; } = default!;
             public bool IsActive { get; set; } = true;
             public bool IsAdmin { get; set; }
             public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
             public DateTime? UpdatedAtUtc { get; set; }
             public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+            public ICollection<UserRefreshToken> RefreshTokens { get; set; } = new List<UserRefreshToken>();
+        }
+
+        public class UserRefreshToken
+        {
+            public long Id { get; set; }
+            public Guid UserId { get; set; }
+            public string TokenHash { get; set; } = default!;
+            public string? RotationParentHash { get; set; }
+            public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+            public DateTime ExpiresAtUtc { get; set; }
+            public DateTime? RevokedAtUtc { get; set; }
+            public string? Device { get; set; }
+            public string? Ip { get; set; }
+            public User User { get; set; } = default!;
         }
 
         public class Role

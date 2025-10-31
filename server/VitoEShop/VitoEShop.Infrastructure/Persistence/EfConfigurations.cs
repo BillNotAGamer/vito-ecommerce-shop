@@ -59,6 +59,11 @@ namespace VitoEShop.Infrastructure.Persistence
             {
                 b.HasKey(x => x.UserId);
                 b.HasIndex(x => x.Email).IsUnique();
+                b.Property(x => x.PasswordHash).IsRequired();
+                b.Property(x => x.PasswordSalt).IsRequired();
+                b.HasMany(x => x.RefreshTokens)
+                    .WithOne(x => x.User)
+                    .HasForeignKey(x => x.UserId);
             }
         }
         public class RoleCfg : IEntityTypeConfiguration<Role>
@@ -84,6 +89,19 @@ namespace VitoEShop.Infrastructure.Persistence
             {
                 b.HasKey(x => x.CustomerId);
                 b.HasIndex(x => x.Email).IsUnique();
+            }
+        }
+        public class UserRefreshTokenCfg : IEntityTypeConfiguration<UserRefreshToken>
+        {
+            public void Configure(EntityTypeBuilder<UserRefreshToken> b)
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.TokenHash).IsRequired().HasMaxLength(256);
+                b.Property(x => x.RotationParentHash).HasMaxLength(256);
+                b.Property(x => x.Device).HasMaxLength(256);
+                b.Property(x => x.Ip).HasMaxLength(64);
+                b.HasIndex(x => x.UserId);
+                b.HasIndex(x => x.TokenHash).IsUnique();
             }
         }
         public class CustomerAddressCfg : IEntityTypeConfiguration<CustomerAddress>

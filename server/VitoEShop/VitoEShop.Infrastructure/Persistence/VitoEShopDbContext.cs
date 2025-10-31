@@ -18,6 +18,7 @@ namespace VitoEShop.Infrastructure.Persistence
         public DbSet<User> Users => Set<User>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
+        public DbSet<UserRefreshToken> UserRefreshTokens => Set<UserRefreshToken>();
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
 

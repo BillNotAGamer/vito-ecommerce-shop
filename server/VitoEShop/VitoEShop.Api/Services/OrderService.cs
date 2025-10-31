@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VitoEShop.Contracts.Account;
 using VitoEShop.Contracts.Orders;
 using VitoEShop.Infrastructure.Persistence;
 using static VitoEShop.Domain.Entities;
@@ -13,6 +19,23 @@ public class OrderService
     public OrderService(VitoEShopDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task<IReadOnlyList<OrderSummaryDto>> GetOrdersForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Orders
+            .AsNoTracking()
+            .Where(o => o.CustomerId == customerId)
+            .OrderByDescending(o => o.PlacedAtUtc)
+            .Select(o => new OrderSummaryDto
+            {
+                OrderId = o.OrderId,
+                OrderNumber = o.OrderNumber,
+                Status = o.Status,
+                PlacedAtUtc = o.PlacedAtUtc,
+                GrandTotal = o.GrandTotal
+            })
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<CreateOrderResponse> CreateOrderAsync(CreateOrderRequest request, CancellationToken cancellationToken = default)
@@ -223,6 +246,23 @@ public class OrderService
         await tx.CommitAsync(cancellationToken);
 
         return true;
+    }
+
+    public async Task<IReadOnlyList<OrderSummaryDto>> GetOrdersForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Orders
+            .Where(o => o.CustomerId == customerId)
+            .OrderByDescending(o => o.PlacedAtUtc)
+            .Select(o => new OrderSummaryDto
+            {
+                OrderId = o.OrderId,
+                OrderNumber = o.OrderNumber,
+                Status = o.Status,
+                PaymentStatus = o.PaymentStatus,
+                GrandTotal = o.GrandTotal,
+                PlacedAtUtc = o.PlacedAtUtc
+            })
+            .ToListAsync(cancellationToken);
     }
 
     private static void ValidateRequest(CreateOrderRequest request)

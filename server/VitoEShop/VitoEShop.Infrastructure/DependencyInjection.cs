@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VitoEShop.Infrastructure.Persistence;
+using VitoEShop.Infrastructure.Repositories;
+using VitoEShop.Infrastructure.Security;
 
 namespace VitoEShop.Infrastructure
 {
@@ -16,6 +18,10 @@ namespace VitoEShop.Infrastructure
         {
             services.AddDbContext<VitoEShopDbContext>(opt =>
                 opt.UseSqlServer(cfg.GetConnectionString("Sql")));
+
+            services.AddSingleton<PasswordHasher>();
+            services.AddSingleton<JwtTokenService>();
+            services.AddScoped<AuthRepository>();
 
             // Mongo
             // services.AddSingleton<IMongoClient>(...);
