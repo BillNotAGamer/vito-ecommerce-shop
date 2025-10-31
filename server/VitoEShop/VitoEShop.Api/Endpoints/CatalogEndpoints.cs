@@ -70,6 +70,16 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
             // 2. Base: chỉ sản phẩm active
             var baseProducts = db.Products.AsNoTracking().Where(p => p.Status == "active");
 
+            if (!string.IsNullOrWhiteSpace(q.Q))
+            {
+                var keyword = q.Q.Trim().ToLower();
+                baseProducts = baseProducts.Where(p =>
+                    (p.Title != null && p.Title.ToLower().Contains(keyword)) ||
+                    (p.Brand != null && p.Brand.ToLower().Contains(keyword)) ||
+                    (p.Slug != null && p.Slug.ToLower().Contains(keyword))
+                );
+            }
+
             // 3. Join với ProductCategories nếu có category filter
             if (categoryId.HasValue)
             {
@@ -185,7 +195,17 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
             return Results.Ok(new PagedResult<ProductListItemDto>(items, total, q.Page, q.PageSize));
         })
         .WithName("Catalog_ListProducts")
-        .WithOpenApi(op => { op.Summary = "Danh sách sản phẩm (filter/sort/pagination)"; return op; });
+        .WithOpenApi(op =>
+        {
+            op.Summary = "Danh sách sản phẩm (filter/sort/pagination)";
+            var keywordParameter = op.Parameters?.FirstOrDefault(p => string.Equals(p.Name, "q", StringComparison.OrdinalIgnoreCase));
+            if (keywordParameter is not null)
+            {
+                keywordParameter.Description = "Optional keyword used to search within product title, brand, or slug.";
+            }
+
+            return op;
+        });
 
         return app;
     }
@@ -211,8 +231,9 @@ public sealed class ProductListQuery
     [FromQuery(Name = "color")] public string? Color { get; set; }
     [FromQuery(Name = "minPrice")] public decimal? MinPrice { get; set; }
     [FromQuery(Name = "maxPrice")] public decimal? MaxPrice { get; set; }
-    /// latest | price_asc | price_desc | bestseller
-    [FromQuery(Name = "sort")] public string? Sort { get; set; } = "latest";
+    [FromQuery(Name = "q")] public string? Q { get; set; }
+   /// latest | price_asc | price_desc | bestseller
+   [FromQuery(Name = "sort")] public string? Sort { get; set; } = "latest";
     [Range(1, int.MaxValue)]
     [FromQuery(Name = "page")] public int Page { get; set; } = 1;
     [Range(1, 200)]
