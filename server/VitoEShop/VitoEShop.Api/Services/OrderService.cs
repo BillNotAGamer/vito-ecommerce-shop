@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VitoEShop.Contracts.Account;
 using VitoEShop.Contracts.Orders;
 using VitoEShop.Infrastructure.Persistence;
 using static VitoEShop.Domain.Entities;
@@ -223,6 +224,23 @@ public class OrderService
         await tx.CommitAsync(cancellationToken);
 
         return true;
+    }
+
+    public async Task<IReadOnlyList<OrderSummaryDto>> GetOrdersForCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Orders
+            .Where(o => o.CustomerId == customerId)
+            .OrderByDescending(o => o.PlacedAtUtc)
+            .Select(o => new OrderSummaryDto
+            {
+                OrderId = o.OrderId,
+                OrderNumber = o.OrderNumber,
+                Status = o.Status,
+                PaymentStatus = o.PaymentStatus,
+                GrandTotal = o.GrandTotal,
+                PlacedAtUtc = o.PlacedAtUtc
+            })
+            .ToListAsync(cancellationToken);
     }
 
     private static void ValidateRequest(CreateOrderRequest request)
