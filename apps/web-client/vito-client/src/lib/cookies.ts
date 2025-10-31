@@ -46,15 +46,15 @@ function resolveExpiration(expiration: ExpirationInput, fallbackMs: number) {
   return new Date(Date.now() + fallbackMs);
 }
 
-export function getAuthCookies(): AuthCookies {
+export async function getAuthCookies(): Promise<AuthCookies> {
   const store = cookies();
-  const accessToken = store.get(ACCESS_TOKEN_COOKIE)?.value ?? null;
-  const refreshToken = store.get(REFRESH_TOKEN_COOKIE)?.value ?? null;
+  const accessToken = (await store).get(ACCESS_TOKEN_COOKIE)?.value ?? null;
+  const refreshToken = (await store).get(REFRESH_TOKEN_COOKIE)?.value ?? null;
 
   return { accessToken, refreshToken };
 }
 
-export function setAuthCookies({
+export async function setAuthCookies({
   accessToken,
   refreshToken,
   accessExp,
@@ -62,14 +62,14 @@ export function setAuthCookies({
 }: SetAuthCookiesParams) {
   const store = cookies();
 
-  store.set({
+  (await store).set({
     name: ACCESS_TOKEN_COOKIE,
     value: accessToken,
     expires: resolveExpiration(accessExp, FIFTEEN_MINUTES_MS),
     ...baseCookieOptions,
   });
 
-  store.set({
+  (await store).set({
     name: REFRESH_TOKEN_COOKIE,
     value: refreshToken,
     expires: resolveExpiration(refreshExp, THIRTY_DAYS_MS),
@@ -77,8 +77,8 @@ export function setAuthCookies({
   });
 }
 
-export function clearAuthCookies() {
+export async function clearAuthCookies() {
   const store = cookies();
-  store.delete(ACCESS_TOKEN_COOKIE);
-  store.delete(REFRESH_TOKEN_COOKIE);
+  (await store).delete(ACCESS_TOKEN_COOKIE);
+  (await store).delete(REFRESH_TOKEN_COOKIE);
 }
