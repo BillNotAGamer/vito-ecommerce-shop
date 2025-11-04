@@ -21,11 +21,11 @@ import { Label } from "@/components/ui/label"
 
 const loginSchema = z.object({
   email: z
-    .string({ required_error: "Email là bắt buộc" })
+    .string()
     .min(1, { message: "Email là bắt buộc" })
-    .email({ message: "Email không hợp lệ" }),
+    .refine((value) => /\S+@\S+\.\S+/.test(value), { message: "Email không hợp lệ" }),
   password: z
-    .string({ required_error: "Mật khẩu là bắt buộc" })
+    .string()
     .min(1, { message: "Mật khẩu là bắt buộc" }),
 })
 

@@ -41,18 +41,22 @@ export function resolveAuthTokens(payload: unknown): SetAuthCookiesParams | null
 }
 
 function resolveExpirations(payload: TokenResponsePayload): ExpirationResult {
-  let accessExp: ExpirationInput =
-    payload.accessTokenExpiresAt ?? payload.expiresAt ?? payload.expiresAtUtc;
-  let refreshExp: ExpirationInput =
-    payload.refreshTokenExpiresAt ?? payload.refreshExpiresAt ?? payload.refreshExpiresAtUtc;
+  let accessExp: ExpirationInput | undefined =
+    (payload.accessTokenExpiresAt ?? payload.expiresAt ?? payload.expiresAtUtc) as
+      | ExpirationInput
+      | undefined;
+  let refreshExp: ExpirationInput | undefined =
+    (payload.refreshTokenExpiresAt ?? payload.refreshExpiresAt ?? payload.refreshExpiresAtUtc) as
+      | ExpirationInput
+      | undefined;
 
   const expiresAt = payload.expiresAt;
   if (expiresAt && typeof expiresAt === "object" && !Array.isArray(expiresAt)) {
     const expiresRecord = expiresAt as Record<string, unknown>;
-    accessExp = accessExp ?? (expiresRecord.accessToken as ExpirationInput);
-    accessExp = accessExp ?? (expiresRecord.access as ExpirationInput);
-    refreshExp = refreshExp ?? (expiresRecord.refreshToken as ExpirationInput);
-    refreshExp = refreshExp ?? (expiresRecord.refresh as ExpirationInput);
+    accessExp = accessExp ?? (expiresRecord.accessToken as ExpirationInput | undefined);
+    accessExp = accessExp ?? (expiresRecord.access as ExpirationInput | undefined);
+    refreshExp = refreshExp ?? (expiresRecord.refreshToken as ExpirationInput | undefined);
+    refreshExp = refreshExp ?? (expiresRecord.refresh as ExpirationInput | undefined);
   }
 
   return { accessExp, refreshExp };

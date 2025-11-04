@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VitoEShop.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1af344c7a9690421eb11af161ec459e4eeed0c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("VitoEShop.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VitoEShop.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
