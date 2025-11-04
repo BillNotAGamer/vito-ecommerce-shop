@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
+import { useToast } from "@/components/ui/use-toast"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -35,6 +35,7 @@ export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const emailFromQuery = searchParams.get("email") ?? ""
+  const { toast } = useToast()
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -58,13 +59,22 @@ export default function LoginPage() {
           | { message?: string }
           | null
         const message = data?.message?.trim()
-        toast.error(message?.length ? message : "Đăng nhập thất bại")
+        toast({
+          variant: "destructive",
+          title: "Thất bại",
+          description: message?.length ? message : "Đăng nhập thất bại",
+        })
         return
       }
 
+      toast({ title: "Thành công", description: "Đăng nhập thành công" })
       router.push("/account/orders")
     } catch (error) {
-      toast.error("Không thể kết nối tới máy chủ")
+      toast({
+        variant: "destructive",
+        title: "Thất bại",
+        description: "Không thể kết nối tới máy chủ",
+      })
     }
   }
 
@@ -121,11 +131,11 @@ export default function LoginPage() {
           </Form>
         </CardContent>
         <CardFooter className="justify-center">
-          <p className="text-muted-foreground text-sm">
-            Chưa có tài khoản?{" "}
-            <Link href="/register" className="text-primary font-medium hover:underline">
-              Đăng ký
-            </Link>
+          <p className="text-muted-foreground flex items-center gap-1 text-sm">
+            <span>Chưa có tài khoản?</span>
+            <Button variant="link" className="h-auto p-0 font-medium" asChild>
+              <Link href="/register">Đăng ký</Link>
+            </Button>
           </p>
         </CardFooter>
       </Card>

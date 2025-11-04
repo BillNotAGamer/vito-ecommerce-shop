@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
+import { useToast } from "@/components/ui/use-toast"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -52,6 +52,7 @@ type RegisterPayload = Omit<RegisterFormValues, "confirmPassword">
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -85,14 +86,25 @@ export default function RegisterPage() {
           | { message?: string }
           | null
         const message = data?.message?.trim()
-        toast.error(message?.length ? message : "Đăng ký thất bại")
+        toast({
+          variant: "destructive",
+          title: "Thất bại",
+          description: message?.length ? message : "Đăng ký thất bại",
+        })
         return
       }
 
-      toast.success("Đăng ký thành công, mời đăng nhập")
+      toast({
+        title: "Thành công",
+        description: "Đăng ký thành công, mời đăng nhập",
+      })
       router.push(`/login?email=${encodeURIComponent(values.email)}`)
     } catch (error) {
-      toast.error("Không thể kết nối tới máy chủ")
+      toast({
+        variant: "destructive",
+        title: "Thất bại",
+        description: "Không thể kết nối tới máy chủ",
+      })
     }
   }
 
@@ -200,11 +212,11 @@ export default function RegisterPage() {
           </Form>
         </CardContent>
         <CardFooter className="justify-center">
-          <p className="text-muted-foreground text-sm">
-            Đã có tài khoản?{" "}
-            <Link href="/login" className="text-primary font-medium hover:underline">
-              Đăng nhập
-            </Link>
+          <p className="text-muted-foreground flex items-center gap-1 text-sm">
+            <span>Đã có tài khoản?</span>
+            <Button variant="link" className="h-auto p-0 font-medium" asChild>
+              <Link href="/login">Đăng nhập</Link>
+            </Button>
           </p>
         </CardFooter>
       </Card>
