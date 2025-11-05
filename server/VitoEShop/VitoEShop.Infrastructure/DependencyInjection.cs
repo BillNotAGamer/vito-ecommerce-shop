@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VitoEShop.Infrastructure.Persistence;
+using VitoEShop.Infrastructure.Shipping;
 
 namespace VitoEShop.Infrastructure
 {
@@ -20,6 +21,8 @@ namespace VitoEShop.Infrastructure
             // Mongo
             // services.AddSingleton<IMongoClient>(...);
             // services.AddSingleton<MongoContext>();
+
+            services.AddSingleton<IShippingEventStore, NoOpShippingEventStore>();
 
             // Repositories/UnitOfWork
             // services.AddScoped<IProductRepository, ProductRepository>();
