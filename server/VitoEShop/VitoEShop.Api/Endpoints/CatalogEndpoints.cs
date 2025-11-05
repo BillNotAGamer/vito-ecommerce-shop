@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi.Any;
 
 namespace EShop.Api.Endpoints;
 
@@ -155,6 +156,9 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
                 };
 
             // 8. Sort
+            var page = q.Page < 1 ? 1 : q.Page;
+            var pageSize = Math.Clamp(q.PageSize, 1, 200);
+
             var ordered = q.Sort switch
             {
                 "price_asc" => groupedWithSales.OrderBy(x => x.MinPrice),
@@ -166,8 +170,8 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
             // 9. Tổng số & phân trang
             var total = await ordered.CountAsync(); // Count sau khi filter
             var items = await ordered
-                .Skip((q.Page - 1) * q.PageSize)
-                .Take(q.PageSize)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(x => new ProductListItemDto(
                     x.ProductId,
                     x.Title,
@@ -192,16 +196,53 @@ public static partial class CatalogEndpoints // partial để tách file nếu m
                 ))
                 .ToListAsync();
 
-            return Results.Ok(new PagedResult<ProductListItemDto>(items, total, q.Page, q.PageSize));
+            return Results.Ok(new PagedResult<ProductListItemDto>(items, total, page, pageSize));
         })
         .WithName("Catalog_ListProducts")
         .WithOpenApi(op =>
         {
             op.Summary = "Danh sách sản phẩm (filter/sort/pagination)";
-            var keywordParameter = op.Parameters?.FirstOrDefault(p => string.Equals(p.Name, "q", StringComparison.OrdinalIgnoreCase));
-            if (keywordParameter is not null)
+            if (op.Parameters is { Count: > 0 })
             {
-                keywordParameter.Description = "Optional keyword used to search within product title, brand, or slug.";
+                var descriptions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["categorySlug"] = "Optional category slug to limit results to a specific active category.",
+                    ["q"] = "Optional keyword used to search within product title, brand, or slug.",
+                    ["brand"] = "Filters the results to products from the specified brand.",
+                    ["size"] = "Filters the results to variants that match the provided size.",
+                    ["color"] = "Filters the results to variants that match the provided color.",
+                    ["minPrice"] = "Only include variants with a price greater than or equal to this value.",
+                    ["maxPrice"] = "Only include variants with a price less than or equal to this value.",
+                    ["sort"] = "Sort order: latest (default), price_asc, price_desc, or bestseller.",
+                    ["page"] = "Page number to return (1-based).",
+                    ["pageSize"] = "Number of items per page (default 12, maximum 200)."
+                };
+
+                foreach (var parameter in op.Parameters)
+                {
+                    if (descriptions.TryGetValue(parameter.Name, out var description))
+                    {
+                        parameter.Description = description;
+                    }
+                }
+
+                if (op.Parameters.FirstOrDefault(p => string.Equals(p.Name, "sort", StringComparison.OrdinalIgnoreCase)) is { } sortParameter)
+                {
+                    sortParameter.Schema.Default = new OpenApiString("latest");
+                }
+
+                if (op.Parameters.FirstOrDefault(p => string.Equals(p.Name, "page", StringComparison.OrdinalIgnoreCase)) is { } pageParameter)
+                {
+                    pageParameter.Schema.Default = new OpenApiInteger(1);
+                    pageParameter.Schema.Minimum = 1;
+                }
+
+                if (op.Parameters.FirstOrDefault(p => string.Equals(p.Name, "pageSize", StringComparison.OrdinalIgnoreCase)) is { } pageSizeParameter)
+                {
+                    pageSizeParameter.Schema.Default = new OpenApiInteger(12);
+                    pageSizeParameter.Schema.Minimum = 1;
+                    pageSizeParameter.Schema.Maximum = 200;
+                }
             }
 
             return op;

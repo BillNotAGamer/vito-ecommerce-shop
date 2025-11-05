@@ -70,7 +70,10 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddCors(opt =>
 {
-    opt.AddPolicy("Any", p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+    opt.AddPolicy("Frontend", policy => policy
+        .WithOrigins("http://localhost:3000", "https://localhost:3000")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 });
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<AuthService>();
@@ -83,7 +86,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("Any");
+app.UseCors("Frontend");
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 app.UseHttpsRedirection();
