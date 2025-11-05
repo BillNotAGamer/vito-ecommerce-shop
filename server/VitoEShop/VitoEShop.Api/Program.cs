@@ -77,6 +77,7 @@ builder.Services.AddCors(opt =>
 });
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ShippingService>();
 
 var app = builder.Build();
 
