@@ -127,6 +127,11 @@ public class AuthService
             claims.Add(new Claim("customerId", customer.CustomerId.ToString()));
         }
 
+        if (user.IsAdmin)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+        }
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
