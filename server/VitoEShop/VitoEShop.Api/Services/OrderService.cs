@@ -61,6 +61,70 @@ public class OrderService
 
         var now = DateTime.UtcNow;
         var subtotal = request.Items.Sum(i => variantLookup[i.VariantId].Variant.Price * i.Quantity);
+        var voucherCode = string.IsNullOrWhiteSpace(request.VoucherCode)
+            ? null
+            : request.VoucherCode!.Trim().ToUpperInvariant();
+
+        Voucher? voucher = null;
+        decimal discountTotal = 0m;
+
+        if (!string.IsNullOrEmpty(voucherCode))
+        {
+            voucher = await _dbContext.Vouchers
+                .FirstOrDefaultAsync(v => v.VoucherCode == voucherCode, cancellationToken);
+
+            if (voucher is null)
+            {
+                throw new InvalidOperationException("Voucher code is invalid.");
+            }
+
+            if (!voucher.IsActive)
+            {
+                throw new InvalidOperationException("Voucher is inactive.");
+            }
+
+            if (now < voucher.StartsAtUtc || (voucher.EndsAtUtc.HasValue && now > voucher.EndsAtUtc.Value))
+            {
+                throw new InvalidOperationException("Voucher is not currently active.");
+            }
+
+            if (voucher.MinOrderValue.HasValue && subtotal < voucher.MinOrderValue.Value)
+            {
+                throw new InvalidOperationException("Order subtotal does not meet the voucher minimum.");
+            }
+
+            if (voucher.UsageLimit.HasValue)
+            {
+                var redemptionCount = await _dbContext.VoucherRedemptions
+                    .CountAsync(vr => vr.VoucherCode == voucher.VoucherCode, cancellationToken);
+
+                if (redemptionCount >= voucher.UsageLimit.Value)
+                {
+                    throw new InvalidOperationException("Voucher usage limit has been reached.");
+                }
+            }
+
+            discountTotal = voucher.Type.ToUpperInvariant() switch
+            {
+                "PERCENT" => subtotal * voucher.DiscountValue / 100m,
+                "AMOUNT" => voucher.DiscountValue,
+                _ => throw new InvalidOperationException("Unsupported voucher type.")
+            };
+
+            if (voucher.MaxDiscount.HasValue)
+            {
+                discountTotal = Math.Min(discountTotal, voucher.MaxDiscount.Value);
+            }
+
+            discountTotal = Math.Min(discountTotal, subtotal);
+
+            if (discountTotal < 0)
+            {
+                discountTotal = 0;
+            }
+        }
+
+        var grandTotal = Math.Max(0, subtotal - discountTotal);
         var orderNumber = GenerateOrderNumber(now);
 
         using var tx = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
@@ -77,14 +141,15 @@ public class OrderService
             ShipToWard = request.ShipTo.Ward,
             Notes = request.ShipTo.Notes,
             Subtotal = subtotal,
-            DiscountTotal = 0,
+            DiscountTotal = discountTotal,
             ShippingFee = 0,
             TaxTotal = 0,
-            GrandTotal = subtotal,
+            GrandTotal = grandTotal,
             Status = "Pending",
             PaymentStatus = "Pending",
             PaymentMethod = "COD",
             OrderNumber = orderNumber,
+            VoucherCode = voucher?.VoucherCode,
             PlacedAtUtc = now,
             UpdatedAtUtc = now
         };
@@ -114,6 +179,19 @@ public class OrderService
 
         await _dbContext.OrderItems.AddRangeAsync(orderItems, cancellationToken);
 
+        if (voucher is not null)
+        {
+            var redemption = new VoucherRedemption
+            {
+                VoucherCode = voucher.VoucherCode,
+                CustomerId = request.CustomerId,
+                OrderId = order.OrderId,
+                RedeemedAtUtc = now
+            };
+
+            await _dbContext.VoucherRedemptions.AddAsync(redemption, cancellationToken);
+        }
+
         foreach (var item in request.Items)
         {
             var inventory = inventories[item.VariantId];
@@ -128,7 +206,12 @@ public class OrderService
         {
             OrderId = order.OrderId,
             OrderNumber = order.OrderNumber,
-            Status = order.Status
+            Status = order.Status,
+            Subtotal = order.Subtotal,
+            DiscountTotal = order.DiscountTotal,
+            ShippingFee = order.ShippingFee,
+            TaxTotal = order.TaxTotal,
+            GrandTotal = order.GrandTotal
         };
     }
 

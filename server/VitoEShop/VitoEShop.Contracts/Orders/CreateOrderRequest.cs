@@ -12,6 +12,8 @@ public class CreateOrderRequest
     [Phone]
     public string? Phone { get; set; }
 
+    public string? VoucherCode { get; set; }
+
     public ShipToDto ShipTo { get; set; } = new();
 
     public List<CartItemDto> Items { get; set; } = new();
