@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using VitoEShop.Infrastructure.Persistence;
+using VitoEShop.Infrastructure.Search;
 using VitoEShop.Infrastructure.Shipping;
 
 namespace VitoEShop.Infrastructure
@@ -18,9 +21,23 @@ namespace VitoEShop.Infrastructure
             services.AddDbContext<VitoEShopDbContext>(opt =>
                 opt.UseSqlServer(cfg.GetConnectionString("Sql")));
 
-            // Mongo
-            // services.AddSingleton<IMongoClient>(...);
-            // services.AddSingleton<MongoContext>();
+            var mongoSection = cfg.GetSection("Mongo");
+            services.Configure<MongoOptions>(mongoSection);
+
+            services.AddSingleton<IMongoClient>(sp =>
+            {
+                var options = sp.GetRequiredService<IOptions<MongoOptions>>().Value;
+                if (string.IsNullOrWhiteSpace(options.ConnectionString))
+                {
+                    throw new InvalidOperationException("Mongo connection string is not configured.");
+                }
+
+                return new MongoClient(options.ConnectionString);
+            });
+
+            services.AddSingleton<MongoContext>();
+
+            services.AddScoped<IProductSearchService, ProductSearchService>();
 
             services.AddSingleton<IShippingEventStore, NoOpShippingEventStore>();
 
