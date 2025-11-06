@@ -16,7 +16,7 @@ export default function CartPage() {
       }
       return { ...product, quantity: item.quantity };
     })
-    .filter(Boolean) as (typeof products)[number] & { quantity: number }[];
+    .filter(Boolean) as ((typeof products)[number] & { quantity: number })[];
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.quantity * (item.salePrice ?? item.price),

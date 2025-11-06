@@ -8,7 +8,7 @@ type ErrorResponse = {
 };
 
 export async function POST() {
-  const { refreshToken } = getAuthCookies();
+  const { refreshToken } = await getAuthCookies();
 
   let backendResponse: Response | null = null;
   if (refreshToken) {
@@ -18,7 +18,7 @@ export async function POST() {
         body: JSON.stringify({ refreshToken }),
       });
     } catch (error) {
-      clearAuthCookies();
+      await clearAuthCookies();
       return NextResponse.json(
         { message: "Unable to reach authentication service." },
         { status: 502 },
@@ -26,7 +26,7 @@ export async function POST() {
     }
   }
 
-  clearAuthCookies();
+  await clearAuthCookies();
 
   if (!backendResponse) {
     return new NextResponse(null, { status: 204 });

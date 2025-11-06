@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import SiteHeader from "@/components/layout/site-header";
-import SiteFooter from "@/components/layout/site-footer";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/lib/theme";
+import RouteProgress from "@/components/app-shell/route-progress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,16 +37,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 font-sans text-gray-900 antialiased`}
-      >
-        <SiteHeader />
-        <main className="min-h-[calc(100vh-200px)] bg-gradient-to-b from-white via-white to-gray-50">
+    <html lang="vi" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system">
+          <RouteProgress />
           {children}
-        </main>
-        <SiteFooter />
-        <Toaster />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

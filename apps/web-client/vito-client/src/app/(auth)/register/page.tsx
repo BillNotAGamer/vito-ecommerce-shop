@@ -22,23 +22,22 @@ import { Label } from "@/components/ui/label"
 const registerSchema = z
   .object({
     fullName: z
-      .string({ required_error: "Họ và tên là bắt buộc" })
+      .string()
       .min(1, { message: "Họ và tên là bắt buộc" }),
     email: z
-      .string({ required_error: "Email là bắt buộc" })
+      .string()
       .min(1, { message: "Email là bắt buộc" })
       .email({ message: "Email không hợp lệ" }),
     phone: z
       .string()
       .trim()
-      .optional()
-      .or(z.literal(""))
-      .transform((value) => value || undefined),
+      .transform((value) => (value ? value : undefined))
+      .optional(),
     password: z
-      .string({ required_error: "Mật khẩu là bắt buộc" })
+      .string()
       .min(8, { message: "Mật khẩu phải có ít nhất 8 ký tự" }),
     confirmPassword: z
-      .string({ required_error: "Xác nhận mật khẩu là bắt buộc" })
+      .string()
       .min(1, { message: "Xác nhận mật khẩu là bắt buộc" }),
   })
   .refine((data) => data.password === data.confirmPassword, {

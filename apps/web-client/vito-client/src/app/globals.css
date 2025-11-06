@@ -1,131 +1,352 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Variants for class-based modes/themes */
 @custom-variant dark (&:is(.dark *));
+@custom-variant hc (&:is(.hc *));
+@custom-variant preset-aurora (&:is(.theme-aurora *));
+@custom-variant preset-noir (&:is(.theme-noir *));
 
+/*
+  Design Tokens via @theme (Tailwind v4)
+  - Colors are defined as --color-<role>-<step> so utilities like bg-primary-500 work.
+  - Radius/spacing/motion/shadows are global tokens used by utilities below.
+*/
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+
+  /* Radius scale */
+  --radius-xs: 0.1875rem; /* 3px */
+  --radius-sm: 0.3125rem; /* 5px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  --radius-xl: 1rem;      /* 16px */
+  --radius-2xl: 1.5rem;   /* 24px */
+
+  /* Spacing scale (influences p-*, m-* if you opt-in) */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.5rem;
+  --spacing-6: 2rem;
+  --spacing-7: 3rem;
+  --spacing-8: 4rem;
+
+  /* Container */
+  --container-max: 80rem; /* 1280px */
+
+  /* Shadow elevations (multi-layer) */
+  --shadow-1: 0 1px 1px hsl(0 0% 0% / 0.04), 0 2px 3px hsl(0 0% 0% / 0.06);
+  --shadow-2: 0 1px 1px hsl(0 0% 0% / 0.04), 0 3px 6px hsl(0 0% 0% / 0.08), 0 6px 12px hsl(0 0% 0% / 0.06);
+  --shadow-3: 0 1px 1px hsl(0 0% 0% / 0.04), 0 6px 12px hsl(0 0% 0% / 0.08), 0 12px 24px hsl(0 0% 0% / 0.08);
+  --shadow-4: 0 2px 2px hsl(0 0% 0% / 0.04), 0 8px 16px hsl(0 0% 0% / 0.10), 0 20px 40px hsl(0 0% 0% / 0.10);
+  --shadow-5: 0 4px 6px hsl(0 0% 0% / 0.06), 0 16px 32px hsl(0 0% 0% / 0.12), 0 32px 64px hsl(0 0% 0% / 0.12);
+
+  /* Blur radius tokens */
+  --blur-1: 4px;
+  --blur-2: 8px;
+  --blur-3: 12px;
+  --blur-4: 20px;
+
+  /* Motion tokens (durations + easings) */
+  --duration-xs: 100ms;
+  --duration-sm: 150ms;
+  --duration-md: 200ms;
+  --duration-lg: 300ms;
+  --duration-xl: 500ms;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Ring + focus */
+  --ring: oklch(0.67 0.19 275); /* default based on primary-500 (Aurora) */
+  --focus: 0 0 0 2px color-mix(in oklch, var(--ring) 50%, transparent);
+
+  /* Semantic colors mapped for Tailwind color tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
   --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
+  --color-popover-foreground: var(--popover-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-card-foreground: var(--card-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  /* Legacy shadcn radius compatibility */
+  --radius: var(--radius-md);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Color scales (Aurora preset default)
+     Primary: indigo/violet, Accent: cyan, Neutral: slate
+  */
+  /* Base hues */
+  --aurora-primary: oklch(0.67 0.19 275);
+  --aurora-accent: oklch(0.82 0.14 205);
+  --aurora-secondary: oklch(0.73 0.03 255);
+  --aurora-success: oklch(0.75 0.12 150);
+  --aurora-warning: oklch(0.86 0.14 85);
+  --aurora-destructive: oklch(0.65 0.20 28);
+  --aurora-neutral: oklch(0.6 0.02 255);
+
+  /* Scales via color-mix for each role */
+  /* Primary */
+  --color-primary-50: color-mix(in oklch, var(--aurora-primary) 15%, white);
+  --color-primary-100: color-mix(in oklch, var(--aurora-primary) 25%, white);
+  --color-primary-200: color-mix(in oklch, var(--aurora-primary) 35%, white);
+  --color-primary-300: color-mix(in oklch, var(--aurora-primary) 45%, white);
+  --color-primary-400: color-mix(in oklch, var(--aurora-primary) 65%, white);
+  --color-primary-500: var(--aurora-primary);
+  --color-primary-600: color-mix(in oklch, var(--aurora-primary) 85%, black);
+  --color-primary-700: color-mix(in oklch, var(--aurora-primary) 75%, black);
+  --color-primary-800: color-mix(in oklch, var(--aurora-primary) 60%, black);
+  --color-primary-900: color-mix(in oklch, var(--aurora-primary) 45%, black);
+  --color-primary-950: color-mix(in oklch, var(--aurora-primary) 25%, black);
+
+  /* Secondary (slate-ish) */
+  --color-secondary-50: color-mix(in oklch, var(--aurora-secondary) 12%, white);
+  --color-secondary-100: color-mix(in oklch, var(--aurora-secondary) 20%, white);
+  --color-secondary-200: color-mix(in oklch, var(--aurora-secondary) 30%, white);
+  --color-secondary-300: color-mix(in oklch, var(--aurora-secondary) 40%, white);
+  --color-secondary-400: color-mix(in oklch, var(--aurora-secondary) 60%, white);
+  --color-secondary-500: var(--aurora-secondary);
+  --color-secondary-600: color-mix(in oklch, var(--aurora-secondary) 85%, black);
+  --color-secondary-700: color-mix(in oklch, var(--aurora-secondary) 75%, black);
+  --color-secondary-800: color-mix(in oklch, var(--aurora-secondary) 60%, black);
+  --color-secondary-900: color-mix(in oklch, var(--aurora-secondary) 45%, black);
+  --color-secondary-950: color-mix(in oklch, var(--aurora-secondary) 25%, black);
+
+  /* Accent (cyan) */
+  --color-accent-50: color-mix(in oklch, var(--aurora-accent) 15%, white);
+  --color-accent-100: color-mix(in oklch, var(--aurora-accent) 25%, white);
+  --color-accent-200: color-mix(in oklch, var(--aurora-accent) 35%, white);
+  --color-accent-300: color-mix(in oklch, var(--aurora-accent) 45%, white);
+  --color-accent-400: color-mix(in oklch, var(--aurora-accent) 65%, white);
+  --color-accent-500: var(--aurora-accent);
+  --color-accent-600: color-mix(in oklch, var(--aurora-accent) 85%, black);
+  --color-accent-700: color-mix(in oklch, var(--aurora-accent) 75%, black);
+  --color-accent-800: color-mix(in oklch, var(--aurora-accent) 60%, black);
+  --color-accent-900: color-mix(in oklch, var(--aurora-accent) 45%, black);
+  --color-accent-950: color-mix(in oklch, var(--aurora-accent) 25%, black);
+
+  /* Neutral (gray/slate) */
+  --color-neutral-50: color-mix(in oklch, var(--aurora-neutral) 10%, white);
+  --color-neutral-100: color-mix(in oklch, var(--aurora-neutral) 15%, white);
+  --color-neutral-200: color-mix(in oklch, var(--aurora-neutral) 25%, white);
+  --color-neutral-300: color-mix(in oklch, var(--aurora-neutral) 35%, white);
+  --color-neutral-400: color-mix(in oklch, var(--aurora-neutral) 55%, white);
+  --color-neutral-500: var(--aurora-neutral);
+  --color-neutral-600: color-mix(in oklch, var(--aurora-neutral) 85%, black);
+  --color-neutral-700: color-mix(in oklch, var(--aurora-neutral) 75%, black);
+  --color-neutral-800: color-mix(in oklch, var(--aurora-neutral) 60%, black);
+  --color-neutral-900: color-mix(in oklch, var(--aurora-neutral) 45%, black);
+  --color-neutral-950: color-mix(in oklch, var(--aurora-neutral) 25%, black);
+
+  /* Success / Warning / Destructive */
+  --color-success-50: color-mix(in oklch, var(--aurora-success) 15%, white);
+  --color-success-100: color-mix(in oklch, var(--aurora-success) 25%, white);
+  --color-success-200: color-mix(in oklch, var(--aurora-success) 35%, white);
+  --color-success-300: color-mix(in oklch, var(--aurora-success) 45%, white);
+  --color-success-400: color-mix(in oklch, var(--aurora-success) 65%, white);
+  --color-success-500: var(--aurora-success);
+  --color-success-600: color-mix(in oklch, var(--aurora-success) 85%, black);
+  --color-success-700: color-mix(in oklch, var(--aurora-success) 75%, black);
+  --color-success-800: color-mix(in oklch, var(--aurora-success) 60%, black);
+  --color-success-900: color-mix(in oklch, var(--aurora-success) 45%, black);
+  --color-success-950: color-mix(in oklch, var(--aurora-success) 25%, black);
+
+  --color-warning-50: color-mix(in oklch, var(--aurora-warning) 15%, white);
+  --color-warning-100: color-mix(in oklch, var(--aurora-warning) 25%, white);
+  --color-warning-200: color-mix(in oklch, var(--aurora-warning) 35%, white);
+  --color-warning-300: color-mix(in oklch, var(--aurora-warning) 45%, white);
+  --color-warning-400: color-mix(in oklch, var(--aurora-warning) 65%, white);
+  --color-warning-500: var(--aurora-warning);
+  --color-warning-600: color-mix(in oklch, var(--aurora-warning) 85%, black);
+  --color-warning-700: color-mix(in oklch, var(--aurora-warning) 75%, black);
+  --color-warning-800: color-mix(in oklch, var(--aurora-warning) 60%, black);
+  --color-warning-900: color-mix(in oklch, var(--aurora-warning) 45%, black);
+  --color-warning-950: color-mix(in oklch, var(--aurora-warning) 25%, black);
+
+  --color-destructive-50: color-mix(in oklch, var(--aurora-destructive) 15%, white);
+  --color-destructive-100: color-mix(in oklch, var(--aurora-destructive) 25%, white);
+  --color-destructive-200: color-mix(in oklch, var(--aurora-destructive) 35%, white);
+  --color-destructive-300: color-mix(in oklch, var(--aurora-destructive) 45%, white);
+  --color-destructive-400: color-mix(in oklch, var(--aurora-destructive) 65%, white);
+  --color-destructive-500: var(--aurora-destructive);
+  --color-destructive-600: color-mix(in oklch, var(--aurora-destructive) 85%, black);
+  --color-destructive-700: color-mix(in oklch, var(--aurora-destructive) 75%, black);
+  --color-destructive-800: color-mix(in oklch, var(--aurora-destructive) 60%, black);
+  --color-destructive-900: color-mix(in oklch, var(--aurora-destructive) 45%, black);
+  --color-destructive-950: color-mix(in oklch, var(--aurora-destructive) 25%, black);
 }
 
-body {
-  font-family: var(--font-geist-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+/* Theme presets using scoped @theme overrides */
+.theme-noir { /* Noir: dark, elegant; primary=emerald, accent=amber */
+  @theme {
+    --aurora-primary: oklch(0.71 0.14 152);
+    --aurora-accent: oklch(0.82 0.17 85);
+    --aurora-secondary: oklch(0.65 0.03 250);
+    --aurora-success: oklch(0.76 0.12 150);
+    --aurora-warning: oklch(0.82 0.16 85);
+    --aurora-destructive: oklch(0.62 0.22 28);
+    --aurora-neutral: oklch(0.58 0.02 255);
+    --ring: var(--color-primary-500);
+  }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-:root {
-  --radius: 0.625rem;
+/* Base surfaces & semantic tokens for shadcn/ui */
+:root,
+.theme-aurora { /* Aurora (default) surfaces */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: var(--color-primary-600);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: var(--color-secondary-100);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-600);
+  --accent: var(--color-accent-100);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --destructive: var(--color-destructive-500);
+  --border: var(--color-neutral-200);
+  --input: var(--color-neutral-200);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: var(--color-primary-600);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: var(--color-neutral-100);
   --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-border: var(--color-neutral-200);
+  --sidebar-ring: var(--ring);
 }
 
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.17 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.17 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --primary: var(--color-primary-400);
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: var(--color-neutral-800);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: var(--color-neutral-800);
+  --muted-foreground: var(--color-neutral-400);
+  --accent: var(--color-accent-800);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --destructive: var(--color-destructive-600);
+  --border: color-mix(in oklch, white 10%, transparent);
+  --input: color-mix(in oklch, white 15%, transparent);
+  --sidebar: oklch(0.17 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-primary: var(--color-primary-400);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
+  --sidebar-accent: var(--color-neutral-800);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: color-mix(in oklch, white 10%, transparent);
+  --sidebar-ring: var(--ring);
 }
 
+/* High-contrast mode tweaks */
+.hc {
+  --border: color-mix(in oklch, var(--foreground) 25%, transparent);
+  --muted-foreground: color-mix(in oklch, var(--foreground) 85%, white);
+  --ring: var(--color-accent-500);
+}
+
+/* Base layer → unify focus, border, and text rendering */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+  }
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  html {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
   }
+  a { color: inherit; text-decoration: none; }
+}
+
+/* Utilities: elevation, glass, backdrop, perspective, durations */
+@layer utilities {
+  @utility .shadow-elevation-1 { box-shadow: var(--shadow-1); }
+  @utility .shadow-elevation-2 { box-shadow: var(--shadow-2); }
+  @utility .shadow-elevation-3 { box-shadow: var(--shadow-3); }
+  @utility .shadow-elevation-4 { box-shadow: var(--shadow-4); }
+  @utility .shadow-elevation-5 { box-shadow: var(--shadow-5); }
+
+  @utility .glass {
+    background: color-mix(in oklch, var(--background) 75%, transparent);
+    border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+    backdrop-filter: blur(var(--blur-3)) saturate(1.1);
+  }
+
+  @utility .backdrop-soft { backdrop-filter: blur(var(--blur-2)) saturate(1.05); }
+  @utility .backdrop-strong { backdrop-filter: blur(var(--blur-4)) saturate(1.15); }
+
+  @utility .perspective-800 { perspective: 800px; }
+  @utility .perspective-1000 { perspective: 1000px; }
+  @utility .preserve-3d { transform-style: preserve-3d; }
+  @utility .backface-hidden { backface-visibility: hidden; }
+
+  @utility .duration-xs { transition-duration: var(--duration-xs); }
+  @utility .duration-sm { transition-duration: var(--duration-sm); }
+  @utility .duration-md { transition-duration: var(--duration-md); }
+  @utility .duration-lg { transition-duration: var(--duration-lg); }
+  @utility .duration-xl { transition-duration: var(--duration-xl); }
+  @utility .ease-in-token { transition-timing-function: var(--ease-in); }
+  @utility .ease-out-token { transition-timing-function: var(--ease-out); }
+  @utility .ease-in-out-token { transition-timing-function: var(--ease-in-out); }
+}
+
+/* Typography: fluid scale helpers */
+@layer utilities {
+  @utility .type-display { font-size: clamp(2.25rem, 1.6rem + 2.2vw, 4rem); line-height: 1.05; letter-spacing: -0.02em; }
+  @utility .type-h1 { font-size: clamp(2rem, 1.5rem + 1.6vw, 3rem); line-height: 1.1; letter-spacing: -0.02em; }
+  @utility .type-h2 { font-size: clamp(1.75rem, 1.35rem + 1.2vw, 2.25rem); line-height: 1.15; letter-spacing: -0.01em; }
+  @utility .type-h3 { font-size: clamp(1.5rem, 1.2rem + 0.9vw, 1.875rem); line-height: 1.2; }
+  @utility .type-h4 { font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.5rem); line-height: 1.25; }
+  @utility .type-h5 { font-size: clamp(1.125rem, 1rem + 0.4vw, 1.25rem); line-height: 1.35; }
+  @utility .type-h6 { font-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem); line-height: 1.4; }
+  @utility .type-lead { font-size: clamp(1.125rem, 1.02rem + 0.3vw, 1.25rem); line-height: 1.6; }
+  @utility .type-body { font-size: 1rem; line-height: 1.7; }
+  @utility .type-small { font-size: 0.875rem; line-height: 1.5; }
+}
+
+/* Container override: center + dynamic padding */
+.container {
+  margin-inline: auto;
+  max-width: var(--container-max);
+  padding-inline: clamp(1rem, 0.75rem + 2vw, 2rem);
 }

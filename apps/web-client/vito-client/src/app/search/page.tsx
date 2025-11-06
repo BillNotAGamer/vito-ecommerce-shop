@@ -1,4 +1,5 @@
 import Link from "next/link";
+/* eslint-disable react/no-unescaped-entities */
 import Container from "@/components/layout/container";
 import ProductCard from "@/components/commerce/product-card";
 import { products, searchProducts } from "@/data/catalog";

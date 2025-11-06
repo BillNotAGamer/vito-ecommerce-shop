@@ -13,10 +13,10 @@ type ErrorResponse = {
 };
 
 export async function POST() {
-  const { refreshToken } = getAuthCookies();
+  const { refreshToken } = await getAuthCookies();
 
   if (!refreshToken) {
-    clearAuthCookies();
+    await clearAuthCookies();
     return NextResponse.json({ message: "Missing refresh token." }, { status: 401 });
   }
 
@@ -27,7 +27,7 @@ export async function POST() {
       body: JSON.stringify({ refreshToken }),
     });
   } catch (error) {
-    clearAuthCookies();
+    await clearAuthCookies();
     return NextResponse.json(
       { message: "Unable to reach authentication service." },
       { status: 502 },
@@ -52,7 +52,7 @@ export async function POST() {
     );
   }
 
-  setAuthCookies(tokens);
+  await setAuthCookies(tokens);
 
   return new NextResponse(null, { status: 204 });
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import Container from "@/components/layout/container";
 import { paymentMethods, shippingMethods } from "@/data/catalog";
 

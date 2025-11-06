@@ -47,9 +47,9 @@ function resolveExpiration(expiration: ExpirationInput, fallbackMs: number) {
 }
 
 export async function getAuthCookies(): Promise<AuthCookies> {
-  const store = cookies();
-  const accessToken = (await store).get(ACCESS_TOKEN_COOKIE)?.value ?? null;
-  const refreshToken = (await store).get(REFRESH_TOKEN_COOKIE)?.value ?? null;
+  const store = await cookies();
+  const accessToken = store.get(ACCESS_TOKEN_COOKIE)?.value ?? null;
+  const refreshToken = store.get(REFRESH_TOKEN_COOKIE)?.value ?? null;
 
   return { accessToken, refreshToken };
 }
@@ -60,16 +60,16 @@ export async function setAuthCookies({
   accessExp,
   refreshExp,
 }: SetAuthCookiesParams) {
-  const store = cookies();
+  const store = await cookies();
 
-  (await store).set({
+  store.set({
     name: ACCESS_TOKEN_COOKIE,
     value: accessToken,
     expires: resolveExpiration(accessExp, FIFTEEN_MINUTES_MS),
     ...baseCookieOptions,
   });
 
-  (await store).set({
+  store.set({
     name: REFRESH_TOKEN_COOKIE,
     value: refreshToken,
     expires: resolveExpiration(refreshExp, THIRTY_DAYS_MS),
@@ -78,7 +78,7 @@ export async function setAuthCookies({
 }
 
 export async function clearAuthCookies() {
-  const store = cookies();
-  (await store).delete(ACCESS_TOKEN_COOKIE);
-  (await store).delete(REFRESH_TOKEN_COOKIE);
+  const store = await cookies();
+  store.delete(ACCESS_TOKEN_COOKIE);
+  store.delete(REFRESH_TOKEN_COOKIE);
 }

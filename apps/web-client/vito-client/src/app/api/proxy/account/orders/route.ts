@@ -15,7 +15,7 @@ type ErrorResponse = {
 type OrdersResponse = unknown;
 
 export async function GET() {
-  const authCookies = getAuthCookies();
+  const authCookies = await getAuthCookies();
   let accessToken = authCookies.accessToken;
   let refreshToken = authCookies.refreshToken;
 
@@ -47,7 +47,7 @@ export async function GET() {
 
 async function attemptTokenRefresh(refreshToken: string | null) {
   if (!refreshToken) {
-    clearAuthCookies();
+    await clearAuthCookies();
     return null;
   }
 
@@ -75,7 +75,7 @@ async function attemptTokenRefresh(refreshToken: string | null) {
     return null;
   }
 
-  setAuthCookies(tokens);
+  await setAuthCookies(tokens);
   return tokens;
 }
 

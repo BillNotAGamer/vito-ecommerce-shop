@@ -35,11 +35,11 @@ export async function POST(request: NextRequest) {
   const tokens = resolveAuthTokens(responseData);
 
   if (!tokens) {
-    clearAuthCookies();
+    await clearAuthCookies();
     return createErrorResponse(502, "Authentication tokens missing from response.");
   }
 
-  setAuthCookies(tokens);
+  await setAuthCookies(tokens);
 
   return new NextResponse(null, { status: 204 });
 }
